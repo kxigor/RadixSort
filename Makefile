@@ -1,11 +1,12 @@
 # Compiler
 CC = gcc
+ASM = nasm
 
 # Program name
 PNAME = radix.o
 
 # Flags
-CFLAGS = 
+CFLAGS = -z noexecstack
 
 # Fast Flags
 #CFLAGS += -O3 -DNDEBUG
@@ -20,15 +21,20 @@ OBJ_DIR = obj
 SRCS  = main.c
 SRCS += src/radix_uint64/radix_uint64.c
 SRCS += src/radix_flt/radix_flt.c
-SRCS += src/radix_asm_uint64/radix_asm_uint64.c
-SRCS += src/radix_ams_flt/radix_ams_flt.c
 SRCS += src/tests/tests.c
 
-OBJS = $(SRCS:.c=.o)
+SRCS_ASM  = src/radix_asm_uint64/radix_asm_uint64.asm
+SRCS_ASM += src/radix_asm_flt/radix_asm_flt.asm
+
+OBJS  = $(SRCS:.c=.o)
+OBJS += $(SRCS_ASM:.asm=.o)
 
 %.o: %.c
 	@mkdir -p $(dir $(OBJ_DIR)/$@)
 	@$(CC) $(CFLAGS) -c $< -o $(OBJ_DIR)/$@ -lm
+%.o: %.asm
+	@mkdir -p $(dir $(OBJ_DIR)/$@)
+	@$(ASM) -f elf64 $< -o $(OBJ_DIR)/$@
 
 $(PNAME): $(OBJS)
 	@$(CC) $(CFLAGS) $(patsubst %,obj/%,$(OBJS)) -o $@ -lm
