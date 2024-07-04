@@ -1,10 +1,6 @@
-section .text
-global _radix_asm_uint64
+global radix_asm_uint64
 
-_radix_asm_uint64:
-    ; Получить адрес массива arr из RDI
-    mov rdi, [rdi]
-    ; Получить размер массива arr из RSI
-    mov rsi, [rsi]
-    
+section .text
+radix_asm_uint64:
+    ret
 section .data

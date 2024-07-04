@@ -16,14 +16,12 @@
         putchar('\n');                          \
     }                                           \
     while(0)                                    \
-
+extern void outllll();
 int main(void)
 {
     uint64_t arr[] = {
         0, 9, 8, 7, 6, 5, 4, 3, 2, 1, 2, 3, 4, 5, 4, 3, 2, 1, 5, 6, 7, 6, 5, 4, 3, 2, 1, 8, 9, 0
     };
 
-    arr_out(arr, sizearr(arr), "%lu");
-    radix_uint64(arr, sizearr(arr));
-    arr_out(arr, sizearr(arr), "%lu");
+    radix_asm_uint64(arr, sizearr(arr));
 }
