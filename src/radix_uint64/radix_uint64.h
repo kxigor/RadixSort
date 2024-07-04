@@ -13,6 +13,14 @@
 #define get_byte(num, pos)      \
     ((num >> (pos << BYTE_SHIFT_SIZE)) & UINT8_MAX)
 
+#define SWAP_T(T, a, b) \
+    do                  \
+    {                   \
+        T temp = a;     \
+        a = b;          \
+        b = temp;       \
+    } while (0)
+
 void radix_uint64(uint64_t arr[], size_t arrSize);
 
 #endif // ! RADIX_UINT64_H
