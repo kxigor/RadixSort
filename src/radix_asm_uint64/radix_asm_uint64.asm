@@ -60,6 +60,35 @@ radix_asm_uint64:
         loop RAU64_MEMSET_LOOP      ;
         pop rcx                     ;
 
+        pop rax
+        pop rsi
+        pop rdi
+        push rax
+        push rdi
+        push rsi
+
+        mov rdx, rcx ; rdx = bytePos
+        shl rdx, 3   ; rdx = bytePos << 3 (3 = BYTE_SHIFT_SIZE)
+        mov rcx, rsi ; rcx = arrSize
+        RAU64_INC_LOOP:
+            mov rbx, [rdi]  ; rbx = arr[rcx]
+
+            push rcx
+            push rdx
+            call get_byte
+            pop rdx
+            pop rcx
+
+            inc rax         ; get_byte + 1
+            shl rax, 3      ; rax * 8 i.e. ptr offset
+            mov rbx, ctr    ; rbx = ctr
+            add rbx, rcx    ; rbx = ctr[get_bye + 1]
+            inc qword [rbx] ; rbx++
+
+            add rdi, 0x8    ; 0x8 = sizeof(uint64_t)
+        loop RAU64_INC_LOOP
+        pop rcx
+
 
     inc rcx             ;
     cmp rcx, 0x8        ; 0x8 = sizeof(uint64_t)
@@ -71,6 +100,22 @@ radix_asm_uint64:
 
     RAU64_EXIT:
     ret     ; return
+
+;-------------------------
+; OUTPUT:
+;   rax
+; INPUT:
+;   rbx = number
+;   rdx = bytePos
+;-------------------------
+get_byte:
+    mov rax, rdx    ;
+    shl rax, 3      ;
+    mov cl, al      ;
+    mov rax, rbx    ; BYTE_SHIFT_SIZE = 3
+    shr rax, cl     ; UINT8_MAX = 255
+    and rax, 0xFF   ; ((num >> (pos << BYTE_SHIFT_SIZE)) & UINT8_MAX
+    ret
 
 section .data
     spec_p  : db "%p",  10, 0   ; specifier for pointer
