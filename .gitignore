@@ -53,3 +53,6 @@ dkms.conf
 
 # VSCODE
 .vscode
+
+# TESTS
+*.stress

@@ -1,4 +1,5 @@
 global radix_asm_uint64
+
 extern printf
 extern calloc
 extern free
@@ -46,12 +47,12 @@ radix_asm_uint64:
     mov rsi, 0x8            ; rsi = 0x8 = sizeof(uint64_t)
     call calloc WRT ..plt   ; tmp = rax = calloc(rdi, rsi)
 
+    ;pop rdi
+    ;pop rsi
+
     test rax, rax           ; if(rax == NULL)
     jz RAU64_EXIT           ;   return;
     push rax
-
-    ;pop rdi
-    ;pop rsi
 
     xor rcx, rcx
     RAU64_BYTE_LOOP:    ; for(size_t rcx = 0; rcx < sizeof(uint64_t); rcx++) {

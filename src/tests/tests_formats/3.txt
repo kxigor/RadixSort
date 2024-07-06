@@ -1,0 +1,8 @@
+./src/tests/TESTING/SIMPLE_FLT
+1
+-10
+10
+10
+100
+10
+5
