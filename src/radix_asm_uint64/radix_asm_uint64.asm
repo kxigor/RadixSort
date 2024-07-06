@@ -128,7 +128,11 @@ radix_asm_uint64:
             pop rbx
             sub rsp, 24
 
-            add rbx, [rax]
+            push rax
+            mov rax, [rax]
+            shl rax, 3
+            add rbx, rax
+            pop rax
             push rdi
             mov rdi, [rdi]
             mov qword [rbx], rdi
