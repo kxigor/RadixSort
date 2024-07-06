@@ -168,6 +168,8 @@ void RequestExecute(Request req, Mode mode)
             FILE* file = fopen(fileName, "w");
             assert(file != NULL);
 
+            fprintf(file, "%lu\n", size);
+
             if(req.type == UINT64_TYPE)
                 for(uint64_t i = 0; i < size; i++)
                     fprintf(

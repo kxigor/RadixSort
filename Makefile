@@ -30,6 +30,8 @@ FORMATS_DIR = src/tests/tests_formats
 SRCS  = main.c
 SRCS += src/radix_uint64/radix_uint64.c
 SRCS += src/radix_flt/radix_flt.c
+SRCS += src/tests/tests_checker/tests_checker.c
+SRCS += src/dirs/dirs.c
 
 SRCS_ASM  = src/radix_asm_uint64/radix_asm_uint64.asm
 SRCS_ASM += src/radix_asm_flt/radix_asm_flt.asm
