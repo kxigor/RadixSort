@@ -59,7 +59,7 @@ TSTS += $(FORMATS_DIR)/3.txt
 TSTS += $(FORMATS_DIR)/4.txt
 tests_init: $(OBJS_TESTS)
 	@$(CC) $(CFLAGS) $(patsubst %,obj/%,$(OBJS_TESTS)) -o $(TNAME) -lm -no-pie
-	@$(foreach file,$(TSTS),./$(TNAME) --silent < $(file);)
+	$(foreach file,$(TSTS),./$(TNAME) --silent < $(file);)
 
 clean:
 	@rm -rf $(OBJ_DIR) $(PNAME) $(TNAME)
