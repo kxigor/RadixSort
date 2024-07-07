@@ -33,6 +33,10 @@ radix_asm_uint64:
     push rbx
     push rcx
     push rdx
+    push r8
+    push r9
+    push r10
+    push r11
 
     test rdi, rdi   ; if(rdi == NULL)
     jz RAU64_EXIT   ;   return;
@@ -40,23 +44,21 @@ radix_asm_uint64:
     test rsi, rsi   ; if(rsi == NULL)
     jz RAU64_EXIT   ;   return;
 
-    push rdi        ; error
-    push rsi        ;
-
+    push rdi                ;
+    push rsi                ;
     mov rdi, rsi            ; rdi = arrSize
     mov rsi, 0x8            ; rsi = 0x8 = sizeof(uint64_t)
     call calloc WRT ..plt   ; tmp = rax = calloc(rdi, rsi)
-
-    ;pop rdi
-    ;pop rsi
+    pop rsi                 ;
+    pop rdi                 ;
 
     test rax, rax           ; if(rax == NULL)
     jz RAU64_EXIT           ;   return;
     push rax
 
-    xor rcx, rcx
+    xor rcx, rcx        ;
     RAU64_BYTE_LOOP:    ; for(size_t rcx = 0; rcx < sizeof(uint64_t); rcx++) {
-
+        
         push rcx                    ;
         mov rcx, 257                ; 257 = sizeof(ctr)
         mov rax, ctr                ;
@@ -66,22 +68,16 @@ radix_asm_uint64:
         loop RAU64_MEMSET_LOOP      ;
         pop rcx                     ;
 
-        pop rax
-        pop rsi
-        pop rdi
-        push rax
-        push rdi
-        push rsi
-
-        push rcx
-        mov rdx, rcx ; rdx = bytePos
-        mov rcx, rsi ; rcx = arrSize
-        RAU64_INC_LOOP:
+        push rdi            ;
+        push rcx            ;
+        mov rdx, rcx        ; rdx = bytePos
+        mov rcx, rsi        ; rcx = arrSize
+        RAU64_INC_LOOP:     ;
             mov rbx, [rdi]  ; rbx = arr[rcx]
 
-            push rcx
-            call get_byte
-            pop rcx
+            push rcx        ;
+            call get_byte   ;
+            pop rcx         ;
 
             inc rax         ; get_byte + 1
             shl rax, 3      ; rax * 8 i.e. ptr offset
@@ -90,8 +86,8 @@ radix_asm_uint64:
             inc qword [rbx] ; rbx++
 
             add rdi, 0x8    ; 0x8 = sizeof(uint64_t)
-        loop RAU64_INC_LOOP
-        pop rcx
+        loop RAU64_INC_LOOP ;
+        pop rcx             ;
 
         push rcx                ;
         mov rcx, 2              ; for(size_t pos = 2; pos < BYTE_MAX + 1; pos++) {
@@ -109,48 +105,46 @@ radix_asm_uint64:
         jb RAU64_LOOP_PREFSUM   ; }
         pop rcx                 ;
 
-        pop rsi
+
         pop rdi
         sub rsp, 0x8
 
-        push rcx            ; for(size_t pos = 0; pos < arrSize; pos++) {
-        xor rcx, rcx        ;
-        RAU64_TMP_LOOP:     ;
-            mov rbx, [rdi]  ;
+        push rcx                ; for(size_t pos = 0; pos < arrSize; pos++) {
+        xor rcx, rcx            ;
+        RAU64_TMP_LOOP:         ;
+            mov rbx, [rdi]      ;
 
-            push rcx        ;
-            call get_byte   ;
-            pop rcx         ;
+            push rcx            ;
+            call get_byte       ;
+            pop rcx             ;
 
-            shl rax, 3      ; rax * 8
-            add rax, ctr    ; rax = ctr + get_byte(arr[pos], bytePos);
+            shl rax, 3          ; rax * 8
+            add rax, ctr        ; rax = ctr + get_byte(arr[pos], bytePos);
 
-            add rsp, 16
-            pop rbx
-            sub rsp, 24
+            add rsp, 16          ;
+            pop rbx             ; rbx = tmp
+            sub rsp, 24         ;
 
-            push rax
-            mov rax, [rax]
-            shl rax, 3
-            add rbx, rax
-            pop rax
-            push rdi
-            mov rdi, [rdi]
-            mov qword [rbx], rdi
-            pop rdi
-            inc qword [rax]
+            push rax            ;
+            mov rax, [rax]      ;
+            shl rax, 3          ;
+            add rbx, rax        ;
+            pop rax             ;
+            push rdi            ;
+            mov rdi, [rdi]      ;
+            mov qword [rbx], rdi;
+            pop rdi             ;
+            inc qword [rax]     ;
 
-            add rdi, 0x8    ; 0x8 = sizeof(uint64_t)
-        inc rcx             ;
-        cmp rcx, rsi        ;
-        jb RAU64_TMP_LOOP   ;
-        pop rcx             ; }
+            add rdi, 0x8        ; 0x8 = sizeof(uint64_t)
+        inc rcx                 ;
+        cmp rcx, rsi            ;
+        jb RAU64_TMP_LOOP       ;
+        pop rcx                 ; }
 
         pop rdi
         pop rax
-        push rdi
-        push rsi
-        push rax
+        sub rsp, 16
 
         push rcx
         mov rcx, rsi
@@ -161,19 +155,21 @@ radix_asm_uint64:
             add rdi, 0x8
         loop RAU64_COPY_LOOP
         pop rcx
-
+        pop rdi
+        
     inc rcx             ;
     cmp rcx, 0x8        ; 0x8 = sizeof(uint64_t)
     jb RAU64_BYTE_LOOP  ; }
 
     pop rdi             ;
     call free WRT ..plt ; free(rdi)
-    
-    pop rsi
-    pop rdi
 
     RAU64_EXIT:
 
+    pop r11
+    pop r10
+    pop r9
+    pop r8
     pop rdx
     pop rcx
     pop rbx

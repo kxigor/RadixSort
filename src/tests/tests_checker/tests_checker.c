@@ -32,6 +32,7 @@ void testing()
             nextFileName  = DirGetNextFileName(dir)
         )
         {
+            printf("%s start...\n", nextFileName);
             FILE* file = fopen(nextFileName, "r");
             assert(file != NULL);
 
@@ -60,8 +61,21 @@ void testing()
                     uint64_comparator
                 );
 
+                // for(size_t pos = 0; pos < size; pos++)
+                // {
+                //     printf("%lu ", arr_my_sort[pos]);
+                // }
+                // putchar('\n');
+
+                // for(size_t pos = 0; pos < size; pos++)
+                // {
+                //     printf("%lu ", arr_stable_sort[pos]);
+                // }
+                // putchar('\n');
+
                 if(memcmp(arr_my_sort, arr_stable_sort, size * sizeof(uint64_t)) != 0)
                 {
+                    printf("Your sorting is shit!\n");
                     abort();
                 }
                 free(arr_my_sort);
