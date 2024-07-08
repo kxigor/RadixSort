@@ -197,4 +197,4 @@ get_byte:
     ret             ; ((num >> (bytePos << BYTE_SHIFT_SIZE)) & UINT8_MAX
 
 section .data
-    ctr: times 257 dq 0 ; 257 = 256(MAX_BYTE_SIZE) + 1
+    ctr: times 257 dq 0 ; 257 = 256(MAX_BYTE) + 1
