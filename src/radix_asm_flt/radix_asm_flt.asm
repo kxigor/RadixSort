@@ -60,6 +60,10 @@ radix_asm_flt:
     test rax, rax   ; if(rax == NULL)
     jz RAF_EXIT     ;   return
 
+    ;-------------------------
+    ; We go through all the bytes except the last one
+    ;-------------------------
+
     xor rcx, rcx    ; size_t bytePos = 0;
     RAF_BYTE_LOOP:  ; for(; bytePos < 3; bytePos++) { 3 = sizeof(float) - 1
 
@@ -101,18 +105,80 @@ radix_asm_flt:
         lea rax, [ofs + 8]      ; rax = ofs[pos]
         mov rbx, ofs            ; rbx = ofs[pos - 1]
         mov rdx, ctr            ; rdx = ctr[pos - 1]
-        mov rcx, 255            ; for(size_t pos = 1; pos < 256; pos++)
+        mov rcx, 255            ; for(size_t pos = 1; pos < 256; pos++) {
         RAF_OFFSETS_LOOP:       ;
-
+            mov rdi, qword [rbx]; rdi  = [rbx](ofs[pos - 1])
+            mov qword [rax], rdi; [rax]  = rdi(ofs[pos - 1])
+            mov rdi, qword [rdx]; rdi  = [rdx](ctr[pos - 1])
+            add qword [rax], rdi; [rax] += rdi(ctr[pos - 1])
             add rax, 0x8        ; rax += 0x8(sizeof(size_t)) i.e. ptr offset
             add rbx, 0x8        ; rbx += 0x8(sizeof(size_t)) i.e. ptr offset
             add rdx, 0x8        ; rdx += 0x8(sizeof(size_t)) i.e. ptr offset
-        loop RAF_OFFSETS_LOOP   ;
+        loop RAF_OFFSETS_LOOP   ; }
         pop rcx                 ;
+
+        pop rdi     ; rdi = arr
+        push rdi    ;
+
+        push rcx                    ;
+        mov rdx, rcx                ; rdx = bytePos
+        mov rcx, rsi                ; rcx = arrSize
+        RAF_TMP_LOOP:               ; for(size_t pos = 0; pos < arrSize; pos++) {
+
+            xor rbx, rbx            ; rbx = 0
+            mov ebx, dword [rdi]    ; ebx = arr[pos]
+
+            push rcx                ;
+            call get_byte           ; rax = get_byte(rbx, rdx)
+            pop rcx                 ;     = get_byte(arr[pos], byte_pos)
+
+            shl rax, 3              ; rax *= 8 i.e. pointer offset
+            mov rbx, ofs            ; rbx = ofs
+            add rbx, rax            ; rbx = ofs + rax = ofs + get_byte
+
+            add rsp, 16             ;
+            pop rax                 ; rax = tmp
+            sub rsp, 24             ;
+
+            push rdx                ;
+            add rax, qwrod [rbx]    ; rax += [rbx] i.e. tmp[ofs + get_byte]
+            xor rdx, rdx            ; rdx = 0
+            mov edx, dword [rdi]    ; edx = arr[pos]
+            mov dword [rax], edx    ; tmp[nextPos] = arr[pos]
+            inc qword [rbx]         ; [rbx]++ i.e. nextPos++
+            pop rdx                 ;
+
+            add rdi, 0x4            ; rdi += 0x4(sizeof(float))
+        loop RAF_TMP_LOOP           ; }
+        pop rcx                     ;
+
+        pop rdi     ; rdi = arr
+        pop rax     ; rax = tmp
+        sub rsp, 16 ;
+
+        push rcx                    ;
+        RAF_EQ_LOOP:                ; for(size_t pos = 0; pos < arrSize; pos++ {)
+            mov ebx, dword [rax]    ; rbx = tmp[pos]
+            mov dword [rdi], ebx    ; arr[pos] = rbx = tmp[pos]
+            add rax, 0x4            ; rax += 0x4(sizeof(float))
+            add rdi, 0x4            ; rdi += 0x4(sizeof(float))
+        loop RAF_EQ_LOOP            ; }
+        pop rcx                     ;
+
+        pop rdi ;
+        pop rax ;
 
     inc rcx         ; rcx++
     cmp rcx, 0x3    ; 3 = sizeof(float) - 1
     jb RAF_BYTE_LOOP; }
+
+    ;-------------------------
+    ; Let's go through the last byte
+    ;-------------------------
+
+    ;-------------------------
+    
+    ;-------------------------
 
     pop rdi             ; rdi = tmp
     call free WRT ..plt ; free(rdi)
