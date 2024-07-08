@@ -12,6 +12,8 @@
 #include "../../dirs/dirs.h"
 #include "../../radix_uint64/radix_uint64.h"
 #include "../../radix_asm_uint64/radix_asm_uint64.h"
+#include "../../radix_flt/radix_flt.h"
+#include "../../radix_asm_flt/radix_asm_flt.h"
 
 #define ASSERT(condition, message)              \
     do {                                        \
@@ -86,7 +88,6 @@ void testing();
                     sizeof(type),                                           \
                     comparator                                              \
                 );                                                          \
-                                                                            \
                 ASSERT(                                                         \
                     !memcmp(arr_my_sort, arr_stable_sort, size * sizeof(type)), \
                     "Your sorting is shit!"                                     \
