@@ -22,12 +22,12 @@
 
 int main(void)
 {
-    // testing();
-    float arr[] = {
-        5.f, 4.f, 3.f, 2.f, -4.f
-    };
-    arr_out(arr, sizearr(arr), "%f");
-    radix_asm_flt(arr, sizearr(arr));
-    arr_out(arr, sizearr(arr), "%f");
-    printf("Exit the program succes...\n");
+    testing();
+    // float arr[] = {
+    //     -2.6f, -2.4f, 9999.f, -9992224324.f, 123.f, -111111.f, 2.5f, -2.5f, 0.001f, -0.001f
+    // };
+    // arr_out(arr, sizearr(arr), "%f");
+    // radix_asm_flt(arr, sizearr(arr));
+    // arr_out(arr, sizearr(arr), "%f");
+    // printf("Exit the program succes...\n");
 }
