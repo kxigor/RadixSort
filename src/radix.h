@@ -9,7 +9,9 @@
 #include <string.h>
 
 #define BYTE_SHIFT_SIZE (3)
+
 #define BYTE_MAX (UINT8_MAX + 1)
+
 #define get_byte(num, pos)\
     ((num >> (pos << BYTE_SHIFT_SIZE)) & UINT8_MAX)
 
