@@ -64,8 +64,8 @@ int main(int argc, char* argv[])
     );
     /*
         Let's assume that if there is 
-        at least some argument, 
-        then silent mode is enabled
+        at   least   some   argument, 
+        then silent  mode  is enabled
     */
     Mode mode = 
         (argc == ONE_ARG)   ? 
@@ -162,6 +162,7 @@ void RequestExecute(Request req, Mode mode)
             snprintf(
                 fileName,
                 sizeof(fileName),
+                /*4047 to make it impossible to overflow the buffer*/
                 "%.4047s/%lu_%lu.stress",
                 req.path, size, k
             );
@@ -174,7 +175,7 @@ void RequestExecute(Request req, Mode mode)
                 for(uint64_t i = 0; i < size; i++)
                     fprintf(
                         file,
-                        "%lu ",
+                        "%lu\n",
                         GenRandUint64(req.min, req.max)
                     );
             else /*req.type == FLT_TYPE*/
@@ -193,6 +194,9 @@ void RequestExecute(Request req, Mode mode)
     );
 }
 
+/*
+    Generate a random uint32 [a, b]
+*/
 uint64_t GenRandUint64(int64_t min, int64_t max)
 {
     if(min > max)
@@ -202,6 +206,9 @@ uint64_t GenRandUint64(int64_t min, int64_t max)
     return (uint64_t)(min + (rand() % (max - min + 1)));
 }
 
+/*
+    Generate a random float [a, b]
+*/
 float GenRandFlt(int64_t min, int64_t max)
 {
     if(min >= max)

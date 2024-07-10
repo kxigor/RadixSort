@@ -34,6 +34,13 @@
 
 void testing();
 
+/*
+    Testing the sorting
+
+    P.S.    It  is  not  the  most  optimal 
+            file organization because it is 
+            not   a   byte   representation
+*/
 #define TESTING_SORT(testing_uint64_dirs, sort, specifier, type, comparator)\
     do                                                                      \
     {                                                                       \
@@ -61,8 +68,8 @@ void testing();
                 size_t size = 0;                                            \
                 fscanf(file, "%lu", &size);                                 \
                                                                             \
-                type* arr_my_sort       = calloc(size, sizeof(type));       \
-                type* arr_stable_sort   = calloc(size, sizeof(type));       \
+                type* arr_my_sort     = calloc(size, sizeof(type));         \
+                type* arr_stable_sort = calloc(size, sizeof(type));         \
                 ASSERT(                                                     \
                     arr_my_sort != NULL,                                    \
                     "Memory allocation!"                                    \
@@ -97,7 +104,6 @@ void testing();
                                                                                 \
                 fclose(file);                                                   \
                 free(nextFileName);                                             \
-                                                                                \
             }                                                                   \
             DirDtor(dir);                                                       \
         }                                                                       \

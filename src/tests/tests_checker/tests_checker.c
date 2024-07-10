@@ -1,8 +1,17 @@
 #include "tests_checker.h"
 
+/*
+    Comparator for uint64_t (for qsort)
+*/
 static int uint64_comparator(const void*, const void*);
+/*
+    Comparator for flt (for qsort)
+*/
 static int flt_comparator(const void*, const void*);
 
+/*
+    Launching the testing system
+*/
 void testing()
 {
     /*
@@ -25,29 +34,29 @@ void testing()
     const size_t testing_flt_dirs_num = 
         sizeof(testing_flt_dirs) / sizeof(*testing_flt_dirs);
 
-    // TESTING_SORT(
-    //     testing_uint64_dirs,
-    //     radix_uint64,
-    //     "%lu",
-    //     uint64_t,
-    //     uint64_comparator
-    // );
+    TESTING_SORT(
+        testing_uint64_dirs,
+        radix_uint64,
+        "%lu",
+        uint64_t,
+        uint64_comparator
+    );
     
-    // TESTING_SORT(
-    //     testing_uint64_dirs,
-    //     radix_asm_uint64,
-    //     "%lu",
-    //     uint64_t,
-    //     uint64_comparator
-    // );
+    TESTING_SORT(
+        testing_uint64_dirs,
+        radix_asm_uint64,
+        "%lu",
+        uint64_t,
+        uint64_comparator
+    );
 
-    // TESTING_SORT(
-    //     testing_flt_dirs,
-    //     radix_flt,
-    //     "%f",
-    //     float,
-    //     flt_comparator
-    // );
+    TESTING_SORT(
+        testing_flt_dirs,
+        radix_flt,
+        "%f",
+        float,
+        flt_comparator
+    );
 
     TESTING_SORT(
         testing_flt_dirs,
@@ -66,7 +75,6 @@ static int uint64_comparator(const void* a_p, const void* b_p)
         (*((const uint64_t*)(b_p)) < *((const uint64_t*)(a_p))) - 
         (*((const uint64_t*)(a_p)) < *((const uint64_t*)(b_p)));
 }
-
 static int flt_comparator(const void* a_p, const void* b_p)
 {
     assert(a_p != NULL);
